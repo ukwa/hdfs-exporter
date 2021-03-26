@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+
+  # HDFS Exporter
+  hdfs-exporter:
+    build: .
+    #image: heritrix3exporter_heritrix3-exporter:latest
+    ports:
+      - 9119:9118
+    environment:
+      - "HDFS_HEALTH_PAGE=http://hadoop:50070/dfshealth.html"
+
+  # A single-node Hadoop and HDFS instance
+  # Volumes are used to share job JARs, but also to give the system some headroom.
+  hadoop:
+    image: ukwa/docker-hadoop
+    command: "/etc/bootstrap.sh -d"
+    ports:
+      - "50070:50070"
+      - "50075:50075"
+      - "8088:8088"
+      - "8042:8042"
+      - "9000:9000"
+      - "50010:50010"
+      - "14000:14000"
+    hostname: hadoop
+    volumes:
+      - "./python-shepherd/tasks/jars:/jars"
+      - "./testing/hadoop-root-nm-local-dir:/tmp/hadoop-root/nm-local-dir"
+      - "./testing/hadoop-userlogs:/usr/local/hadoop/logs/userlogs"
+
+
+
+
+
+
